@@ -22,7 +22,7 @@ KeyVaultSecret secret =
     await secretClient.GetSecretAsync("SqlAzure");
 KeyVaultSecret audienceKey = await secretClient.GetSecretAsync("Audience");
 KeyVaultSecret issuerKey = await secretClient.GetSecretAsync("Issuer");
-KeyVaultSecret secretKey = await secretClient.GetSecretAsync("SecretKey");
+KeyVaultSecret secretKey = await secretClient.GetSecretAsync("SecretKey2");
 
 
 string connectionString = secret.Value;

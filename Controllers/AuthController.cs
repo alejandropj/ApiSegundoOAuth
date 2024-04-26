@@ -1,6 +1,7 @@
 ﻿using ApiSegundoOAuth.Helpers;
 using ApiSegundoOAuth.Models;
 using ApiSegundoOAuth.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -64,5 +65,29 @@ namespace ApiSegundoOAuth.Controllers
                     });
             }
         }
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<UsuarioCubo>> PerfilUser()
+        {
+            Claim claim = HttpContext.User
+                .FindFirst(x => x.Type == "UserData");
+            string jsonUser = claim.Value;
+            UsuarioCubo user =
+                JsonConvert.DeserializeObject<UsuarioCubo>(jsonUser);
+            return user;
         }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<CompraCubos>>> Compras()
+        {
+            Claim claim = HttpContext.User
+                .FindFirst(x => x.Type == "UserData");
+            string jsonUser = claim.Value;
+            UsuarioCubo user =
+                JsonConvert.DeserializeObject<UsuarioCubo>(jsonUser);
+            List<CompraCubos> compras = await this.repo.GetPedidoUser(user.id_usuario);
+            return compras;
+        }
+    }
 }
