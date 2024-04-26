@@ -1,4 +1,5 @@
 using ApiSegundoOAuth.Data;
+using ApiSegundoOAuth.Helpers;
 using ApiSegundoOAuth.Repositories;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,28 @@ builder.Services.AddAzureClients(factory =>
 });
 SecretClient secretClient =
 builder.Services.BuildServiceProvider().GetService<SecretClient>();
+
+
 KeyVaultSecret secret =
     await secretClient.GetSecretAsync("SqlAzure");
+KeyVaultSecret audienceKey = await secretClient.GetSecretAsync("Audience");
+KeyVaultSecret issuerKey = await secretClient.GetSecretAsync("Issuer");
+KeyVaultSecret secretKey = await secretClient.GetSecretAsync("SecretKey");
+
+
 string connectionString = secret.Value;
+string secretKeyValue = secretKey.Value;
+string audience = audienceKey.Value;
+string issuer = issuerKey.Value;
+
+HelperActionServicesOAuth helper = new HelperActionServicesOAuth(secretKeyValue, audience, issuer);
+
+builder.Services.AddSingleton<HelperActionServicesOAuth>(helper);
+//builder.Services.AddSingleton<HelperActionServicesOAuth>(helper);
+
+builder.Services.AddAuthentication
+    (helper.GetAuthenticateSchema())
+    .AddJwtBearer(helper.GetJwtBearerOptions());
 
 
 builder.Services.AddTransient<RepositoryCubos>();
