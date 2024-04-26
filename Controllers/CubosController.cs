@@ -1,8 +1,6 @@
 ﻿using ApiSegundoOAuth.Models;
 using ApiSegundoOAuth.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 
 namespace ApiSegundoOAuth.Controllers
 {
@@ -20,6 +18,11 @@ namespace ApiSegundoOAuth.Controllers
         public async Task<ActionResult<List<Cubo>>> GetCubos()
         {
             return await this.repo.GetCubosAsync();
+        }
+        [HttpGet("{marca}")]
+        public async Task<ActionResult<List<Cubo>>> FindCuboMarca(string marca)
+        {
+            return await this.repo.FindCubosByMarcaAsync(marca);
         }
 
     }
